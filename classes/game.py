@@ -8,8 +8,11 @@ class RockPaperScissorsMinusOneGame:
     def __init__(self):
         self.shapes = {"rock": Rock(), "paper": Paper(), "scissors": Scissors()}
         self.computer_shapes = []
+        self.result = ""
 
     def get_shape(self, shape_name: str) -> Shape:
+        if (self.__validate_shape(shape_name) is False):
+            raise Exception("Invalid move! Use 'rock', 'paper', or 'scissors'.")
         return self.shapes[shape_name.lower()]
 
     def get_computer_shapes(self) -> list:
@@ -29,13 +32,27 @@ class RockPaperScissorsMinusOneGame:
         return self.get_shape(player_shape1), self.get_shape(player_shape2)
 
     def play_round(self, player_shape: Shape, computer_shape: Shape):
+        stop_game = False
         if player_shape.beats(computer_shape):
-            return "You win!"
+            self.result = "You win!\n"
+            if self.__play_russian_rulette("Computer"):
+                stop_game = True
         elif computer_shape.beats(player_shape):
-            return "Computer wins!"
+            self.result = "Computer wins!\n"
+            if self.__play_russian_rulette("You"):
+                stop_game = True
         else:
-            return "It's a tie!"
+            self.result = "It's a tie!"
+        return self.result, stop_game
     
+    def __play_russian_rulette(self, player_name: str) -> bool:
+        self.result += "Time for Russian Rulette...\n"
+        if random.randint(1, 6) == 6:
+            self.result += f"{player_name} lost the game! Russian Roulette was not in favor."
+            return True
+        self.result += f"{player_name} survived Russian Roulette! Let's play another round!"
+        return False
+
     def __validate_shape(self, shape: str) -> bool:
         if shape.lower() not in self.shapes:
             return False

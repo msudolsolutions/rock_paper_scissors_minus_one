@@ -18,25 +18,35 @@ def main():
         if player_input == "quit":
             print("Thanks for playing!")
             break
-        player_shapes = game.get_player_shapes(player_input)
+        try:
+            player_shapes = game.get_player_shapes(player_input)
+        except Exception as e:
+            print(e)
+            continue
         computer_shapes = game.get_computer_shapes()
         print(f"The computer's shapes: {computer_shapes[0].name()}, {computer_shapes[1].name()}")
 
         player_shape = input("\nWhat shape do you want to leave: ").strip().lower()
-        if player_shape == "quit":
-            print("Thanks for playing!")
-            break
-        elif (game.get_shape(player_shape) not in player_shapes):
-            print("Invalid shape. Please choose one of the shapes you have.")
+        try:
+            if player_shape == "quit":
+                print("Thanks for playing!")
+                break
+            elif (game.get_shape(player_shape) not in player_shapes):
+                print("Invalid shape. Please choose one of the shapes you have.")
+                continue
+            else:
+                player_shape = game.get_shape(player_shape)
+                computer_shape = game.get_final_computer_shape()
+        except Exception as e:
+            print(e.args[0])
             continue
-        else:
-            player_shape = game.get_shape(player_shape)
-            computer_shape = game.get_final_computer_shape()
 
         print(f"\nYou chose {player_shape.name()}.")
         print(f"Computer chose {computer_shape.name()}.")
         result = game.play_round(player_shape, computer_shape)
-        print(result)
+        print(result[0])
+        if result[1]:
+            break
 
 
 if __name__ == "__main__":
